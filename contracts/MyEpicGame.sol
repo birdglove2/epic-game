@@ -47,6 +47,13 @@ contract MyEpicGame is ERC721 {
     // to store the owner of the NFT and reference it later.
     mapping(address => uint256) public nftHolders;
 
+    event CharacterNFTMinted(
+        address sender,
+        uint256 tokenId,
+        uint256 characterIndex
+    );
+    event AttackComplete(uint256 newBossHp, uint256 newPlayerHp);
+
     // Data passed in to the contract when it's first created initializing the characters.
     // We're going to actually pass these values in from run.js.
     constructor(
@@ -122,6 +129,8 @@ contract MyEpicGame is ERC721 {
 
         // Keep an easy way to see who owns what NFT.
         nftHolders[msg.sender] = newItemId;
+
+        emit CharacterNFTMinted(msg.sender, newItemId, _characterIndex);
 
         // Increment the tokenId for the next person that uses it.
         _tokenIds.increment();
@@ -203,6 +212,8 @@ contract MyEpicGame is ERC721 {
         } else {
             player.hp = player.hp - bigBoss.attackDamage;
         }
+
+        emit AttackComplete(bigBoss.hp, player.hp);
 
         // Console for ease.
         console.log("Player attacked boss. New boss hp: %s", bigBoss.hp);
