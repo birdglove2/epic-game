@@ -208,4 +208,23 @@ contract MyEpicGame is ERC721 {
         console.log("Player attacked boss. New boss hp: %s", bigBoss.hp);
         console.log("Boss attacked player. New player hp: %s\n", player.hp);
     }
+
+    function checkIfUserHasNFT()
+        public
+        view
+        returns (CharacterAttributes memory)
+    {
+        // Get the tokenId of the user's character NFT
+        uint256 tokenId = nftHolders[msg.sender];
+
+        // If the user has a tokenId in the map, return their character.
+        if (tokenId > 0) {
+            return nftHolderAttributes[tokenId];
+
+            // else, return an empty character.
+        } else {
+            CharacterAttributes memory emptyStruct;
+            return emptyStruct;
+        }
+    }
 }
