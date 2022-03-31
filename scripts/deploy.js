@@ -1,7 +1,6 @@
 const main = async () => {
   const gameContractFactory = await hre.ethers.getContractFactory('MyEpicGame');
   const gameContract = await gameContractFactory.deploy(
-    // Default characters
     ['Leo', 'Aang', 'Pikachu'],
     [
       'https://i.imgur.com/pKd5Sdk.png',
@@ -10,7 +9,6 @@ const main = async () => {
     ],
     [100, 200, 300],
     [100, 50, 25],
-
     // Big Boss
     'Elon Musk',
     'https://i.imgur.com/AksR0tt.png',
