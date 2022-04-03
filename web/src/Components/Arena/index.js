@@ -5,7 +5,7 @@ import { useContract } from '../../hooks/useContract';
 /*
  * We pass in our characterNFT metadata so we can show a cool card in our UI
  */
-const Arena = ({ characterNFT }) => {
+const Arena = ({ characterNFT, setCharacterNFT }) => {
   const { gameContract, transformCharacterData } = useContract();
   const [boss, setBoss] = useState(null);
   const [attackState, setAttackState] = useState('');
@@ -33,9 +33,24 @@ const Arena = ({ characterNFT }) => {
       setBoss(transformCharacterData(bossTxn));
     };
 
+    const onAttackComplete = (newBossHp, newPlayerHp) => {
+      const bossHp = newBossHp.toNumber();
+      const playerHp = newPlayerHp.toNumber();
+      console.log(`AttackComplete - BossHp: ${bossHp} Player Hp: ${playerHp}`);
+      setBoss((prevState) => ({ ...prevState, hp: bossHp }));
+      setCharacterNFT((prevState) => ({ ...prevState, hp: playerHp }));
+    };
+
     if (gameContract) {
       fetchBoss();
+      gameContract.on('AttackComplete', onAttackComplete);
     }
+
+    return () => {
+      if (gameContract) {
+        gameContract.off('AttackComplete', onAttackComplete);
+      }
+    };
   }, [gameContract]);
 
   return (
