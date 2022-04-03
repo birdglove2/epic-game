@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import twitterLogo from './assets/twitter-logo.svg';
 import './App.css';
 import SelectCharacter from './Components/SelectCharacter';
+import Arena from './Components/Arena';
 import { useContract } from './hooks/useContract';
 
 // Constants
@@ -107,6 +108,8 @@ const App = () => {
       );
     } else if (currentAccount && !characterNFT) {
       return <SelectCharacter setCharacterNFT={setCharacterNFT} />;
+    } else if (currentAccount && characterNFT) {
+      return <Arena characterNFT={characterNFT} />;
     }
   };
 
