@@ -32,7 +32,6 @@ const SelectCharacter = ({ setCharacterNFT }) => {
           return transformCharacterData(charactersData);
         });
 
-        console.log('ccc', characters);
         setCharacters(characters);
       } catch (err) {
         console.error('Something went wrong fetching characters');
