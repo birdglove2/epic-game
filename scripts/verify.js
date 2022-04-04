@@ -1,19 +1,19 @@
 const main = async () => {
   await hre.run('verify:verify', {
-    address: '0xECF765F923Ac195D7453Ff2C07d6b223239Fe6e8',
+    address: '0x89378a25200A385B436503EB18B253d49b594860',
     constructorArguments: [
-      ['Leo', 'Aang', 'Pikachu'],
+      ['Mega Charizard Y', 'Lucario', 'Gengar'],
       [
-        'https://i.imgur.com/pKd5Sdk.png',
-        'https://i.imgur.com/xVu4vFL.png',
-        'https://i.imgur.com/WMB6g9u.png',
+        'bafybeiffh6fk2hujxi653zjnfe2gtj44ben2xvet5tu67ctc3m64e33c3m',
+        'QmV4ybsmVyUNdMDfks5qHFtPwiBMoY6iuoY9TPSTWsET5S',
+        'bafybeicvhxo2s5tk2336rsz2dys6blywigexsrgakyz75ynhgdbjo7rhea',
       ],
-      [100, 200, 300],
-      [100, 50, 25],
+      [500, 400, 450],
+      [250, 250, 300],
       // Big Boss
       'Elon Musk',
       'https://i.imgur.com/AksR0tt.png',
-      10000,
+      1000,
       50,
     ],
   });
