@@ -13,7 +13,7 @@
 ```
 
 - mint your characters
-  ![Mint your Characters](coverPic.png)
+  ![Mint your Characters](defaultCharacters.png)
 
 - fight the boss
 - the boss has a very high Hp, so let's help defeat him together.
