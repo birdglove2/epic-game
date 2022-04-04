@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import twitterLogo from './assets/twitter-logo.svg';
 import './App.css';
 import SelectCharacter from './Components/SelectCharacter';
+import LoadingIndicator from './Components/LoadingIndicator';
 import Arena from './Components/Arena';
 import { useContract } from './hooks/useContract';
 
@@ -12,6 +13,7 @@ const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`;
 const App = () => {
   const [currentAccount, setCurrentAccount] = useState(null);
   const [characterNFT, setCharacterNFT] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const { gameContract, transformCharacterData } = useContract();
 
@@ -35,6 +37,8 @@ const App = () => {
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -70,6 +74,7 @@ const App = () => {
 
   useEffect(() => {
     const onLoad = async () => {
+      setIsLoading();
       await checkIfWalletIsConnected();
       await checkNetwork();
     };
@@ -91,6 +96,7 @@ const App = () => {
       } else {
         console.log('No character NFT found');
       }
+      setIsLoading(false);
     };
 
     if (currentAccount && gameContract) {
@@ -100,6 +106,10 @@ const App = () => {
   }, [currentAccount, gameContract]);
 
   const renderContent = () => {
+    if (isLoading) {
+      return <LoadingIndicator />;
+    }
+
     if (!currentAccount) {
       return (
         <button className="cta-button connect-wallet-button" onClick={connectWallet}>

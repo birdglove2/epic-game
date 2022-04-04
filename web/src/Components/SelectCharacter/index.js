@@ -1,22 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import './SelectCharacter.css';
 import { useContract } from '../../hooks/useContract';
+import '../LoadingIndicator';
+import LoadingIndicator from '../LoadingIndicator';
 
 const SelectCharacter = ({ setCharacterNFT }) => {
   const [characters, setCharacters] = useState([]);
   const { gameContract, transformCharacterData } = useContract();
+  const [mintingCharacter, setMintingCharacter] = useState(false);
 
   const mintCharacterNFTAction = async (characterId) => {
     console.log('heelo ', characterId);
     try {
       if (gameContract) {
         console.log('Minting character in progress...');
+        setMintingCharacter(true);
         const mintTxn = await gameContract.mintCharacterNFT(characterId);
         await mintTxn.wait();
         console.log('mintTxn:', mintTxn);
       }
     } catch (error) {
       console.warn('MintCharacterAction Error:', error);
+    } finally {
+      setMintingCharacter(true);
     }
   };
 
@@ -74,7 +80,10 @@ const SelectCharacter = ({ setCharacterNFT }) => {
           <div className="name-container">
             <p>{character.name}</p>
           </div>
-          <img src={character.imageURI} alt={character.name} />
+          <img
+            src={`https://cloudflare-ipfs.com/ipfs/${character.imageURI}`}
+            alt={character.name}
+          />
           <button
             style={{ border: '1px solid red', cursor: 'pointer', zIndex: 2 }}
             className="character-mint-button"
@@ -88,6 +97,18 @@ const SelectCharacter = ({ setCharacterNFT }) => {
   return (
     <div className="select-character-container">
       <h2>Mint Your Hero. Choose wisely.</h2>
+      {mintingCharacter && (
+        <div className="loading">
+          <div className="indicator">
+            <LoadingIndicator />
+            <p>Minting In Progress...</p>
+          </div>
+          <img
+            src="https://media2.giphy.com/media/61tYloUgq1eOk/giphy.gif?cid=ecf05e47dg95zbpabxhmhaksvoy8h526f96k4em0ndvx078s&rid=giphy.gif&ct=g"
+            alt="Minting loading indicator"
+          />
+        </div>
+      )}
       {characters.length > 0 && <div className="character-grid">{renderCharacters()}</div>}
     </div>
   );
