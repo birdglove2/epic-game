@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import './Arena.css';
 import { useContract } from '../../hooks/useContract';
+import LoadingIndicator from '../LoadingIndicator';
 
-/*
- * We pass in our characterNFT metadata so we can show a cool card in our UI
- */
 const Arena = ({ characterNFT, setCharacterNFT }) => {
   const { gameContract, transformCharacterData } = useContract();
   const [boss, setBoss] = useState(null);
   const [attackState, setAttackState] = useState('');
+  const [showToast, setShowToast] = useState(false);
 
   const runAttackAction = async () => {
     try {
@@ -19,6 +18,11 @@ const Arena = ({ characterNFT, setCharacterNFT }) => {
         await attackTxn.wait();
         console.log('attackTxn:', attackTxn);
         setAttackState('hit');
+
+        setShowToast(true);
+        setTimeout(() => {
+          setShowToast(false);
+        }, 5000);
       }
     } catch (error) {
       console.error('Error attacking boss:', error);
@@ -55,6 +59,12 @@ const Arena = ({ characterNFT, setCharacterNFT }) => {
 
   return (
     <div className="arena-container">
+      {boss && characterNFT && (
+        <div id="toast" className={showToast ? 'show' : ''}>
+          <div id="desc">{`💥 ${boss.name} was hit for ${characterNFT.attackDamage}!`}</div>
+        </div>
+      )}
+
       {boss && (
         <div className="boss-container">
           <div className={`boss-content`}>
@@ -72,6 +82,12 @@ const Arena = ({ characterNFT, setCharacterNFT }) => {
               {`💥 Attack ${boss.name}`}
             </button>
           </div>
+          {attackState === 'attacking' && (
+            <div className="loading-indicator">
+              <LoadingIndicator />
+              <p>Attacking ⚔️</p>
+            </div>
+          )}
         </div>
       )}
 
@@ -82,7 +98,10 @@ const Arena = ({ characterNFT, setCharacterNFT }) => {
             <div className="player">
               <div className="image-content">
                 <h2>{characterNFT.name}</h2>
-                <img src={characterNFT.imageURI} alt={`Character ${characterNFT.name}`} />
+                <img
+                  src={`https://cloudflare-ipfs.com/ipfs/${characterNFT.imageURI}`}
+                  alt={`Character ${characterNFT.name}`}
+                />
                 <div className="health-bar">
                   <progress value={characterNFT.hp} max={characterNFT.maxHp} />
                   <p>{`${characterNFT.hp} / ${characterNFT.maxHp} HP`}</p>
