@@ -1,6 +1,6 @@
 const main = async () => {
   await hre.run('verify:verify', {
-    address: '0x89378a25200A385B436503EB18B253d49b594860',
+    address: '0x047A42ef33E44628D6149023324BB82fb9f14d6a',
     constructorArguments: [
       ['Mega Charizard Y', 'Lucario', 'Gengar'],
       [
@@ -13,7 +13,7 @@ const main = async () => {
       // Big Boss
       'Elon Musk',
       'https://i.imgur.com/AksR0tt.png',
-      1000,
+      10000,
       50,
     ],
   });
