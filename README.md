@@ -1,15 +1,20 @@
-# Basic Sample Hardhat Project
+# Epic game
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, a sample script that deploys that contract, and an example of a task implementation, which simply lists the available accounts.
+- Epic game is a card-based nft game powered by [@buildspace] (https://app.buildspace.so/)
+- This project is built with `solidity` `hardhat` `react` `javascript`
 
-Try running some of the following tasks:
+## How to play
 
-```shell
-npx hardhat accounts
-npx hardhat compile
-npx hardhat clean
-npx hardhat test
-npx hardhat node
-node scripts/sample-script.js
-npx hardhat help
 ```
+   cd web
+   `yarn` to install dependencies
+   `yarn start`
+
+```
+
+- mint your characters
+  ![Mint your Characters](coverPic.png)
+
+- fight the boss
+- the boss has a very high Hp, so let's help defeat him together.
+  ![attackBoss](attackBoss.png)
