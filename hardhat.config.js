@@ -25,11 +25,11 @@ module.exports = {
       url: process.env.STAGING_INFURA_KEY,
       accounts: [process.env.PRIVATE_KEY],
     },
-  },
-  mainnet: {
-    chainId: 1,
-    url: process.env.PROD_INFURA_KEY,
-    accounts: [process.env.PRIVATE_KEY],
+    mainnet: {
+      chainId: 1,
+      url: process.env.PROD_INFURA_KEY,
+      accounts: [process.env.PRIVATE_KEY],
+    },
   },
   etherscan: {
     apiKey: process.env.ETHERSCAN_API_KEY,
