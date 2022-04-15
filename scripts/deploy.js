@@ -1,4 +1,4 @@
-const main = async () => {
+const deployEpicGame = async () => {
   const gameContractFactory = await hre.ethers.getContractFactory('MyEpicGame');
   const gameContract = await gameContractFactory.deploy(
     ['Mega Charizard Y', 'Lucario', 'Gengar'],
@@ -18,11 +18,12 @@ const main = async () => {
 
   await gameContract.deployed();
   console.log('Contract deployed to:', gameContract.address);
+  return gameContract;
 };
 
 const runMain = async () => {
   try {
-    await main();
+    await deployEpicGame();
     process.exit(0);
   } catch (err) {
     console.log(err);
@@ -31,3 +32,5 @@ const runMain = async () => {
 };
 
 runMain();
+
+module.exports.deployEpicGame = deployEpicGame;
