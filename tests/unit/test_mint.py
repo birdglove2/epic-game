@@ -1,5 +1,5 @@
 from brownie import network, exceptions
-from scripts.deploy_epic_game import deploy_epic_game, deploy_and_mint
+from scripts.deploy_epic_game import deploy_epic_game
 from scripts.helpful_scripts import get_account, LOCAL_BLOCKCHAIN_ENVIRONMENTS
 import pytest
 
