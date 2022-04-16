@@ -1,14 +1,20 @@
 import pytest
-from brownie import (
-    accounts,
-    config,
-    network,
-)
+
 from scripts.helpful_scripts import (
-    LOCAL_BLOCKCHAIN_ENVIRONMENTS,
+    get_account,
 )
+
+
+@pytest.fixture
+def account():
+    return get_account()
 
 
 @pytest.fixture
 def chainlink_fee():
     return 2500000000000000000
+
+
+@pytest.fixture
+def random_number():
+    return 100
