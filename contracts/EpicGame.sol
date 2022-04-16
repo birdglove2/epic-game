@@ -31,7 +31,7 @@ contract EpicGame is ERC721, VRFConsumerBase, Ownable {
     uint256 attackDamage;
   }
 
-  uint8 public critChance;
+  uint256 public critChance;
 
   // For VRFCoordinator
   bytes32 internal keyHash;
@@ -50,7 +50,7 @@ contract EpicGame is ERC721, VRFConsumerBase, Ownable {
   mapping(address => uint256) public nftHolders;
 
   event CharacterNFTMinted(address sender, uint256 tokenId, uint256 characterIndex);
-  event AttackInitiate(bytes32 _requestId, uint8 critChance);
+  event AttackInitiate(bytes32 requestId, uint256 critChance);
   event AttackComplete(uint256 newBossHp, uint256 newPlayerHp);
 
   // Data passed in to the contract when it's first created initializing the characters.
@@ -165,37 +165,31 @@ contract EpicGame is ERC721, VRFConsumerBase, Ownable {
     // Get the state of the player's NFT.
     uint256 tokenId = nftHolders[msg.sender];
     CharacterAttributes storage player = nftHolderAttributes[tokenId];
-
-    // Make sure the player has more than 0 HP.
     require(player.hp > 0, 'player has no HP left');
-
-    // Make sure the boss has more than 0 HP.
     require(bigBoss.hp > 0, 'Big Boss is already dead');
 
-    // bytes32 requestId = requestRandomness(keyHash, oracleFee);
+    // request for critical chance
+    bytes32 requestId = requestRandomness(keyHash, oracleFee);
+    emit AttackInitiate(requestId, critChance);
   }
 
   // fulfill attacking boss with random critical chance
   function fulfillRandomness(bytes32 requestId, uint256 randomness) internal override {
-    critChance = uint8(randomness % 10);
-
-    emit AttackInitiate(requestId, critChance);
-
     // Get the state of the player's NFT.
-    uint256 tokenId = nftHolders[msg.sender];
+    uint256 tokenId = nftHolders[tx.origin];
     CharacterAttributes storage player = nftHolderAttributes[tokenId];
+
+    critChance = randomness % 10;
 
     // calculate critical damage for player
     uint256 damage = player.attackDamage;
-    if (critChance >= 5 && critChance <= 8) {
-      damage = (player.attackDamage * 2);
-    } else if (critChance >= 9) {
+    if (critChance >= 9) {
       damage = player.attackDamage * 3;
-    } else {
-      damage = player.attackDamage;
+    } else if (critChance >= 6 && critChance <= 8) {
+      damage = player.attackDamage * 2;
     }
 
-    // Allow player to attack boss.
+    // Allow player to attack boss with critable damage
     if (bigBoss.hp < damage) {
       bigBoss.hp = 0;
     } else {
@@ -208,6 +202,7 @@ contract EpicGame is ERC721, VRFConsumerBase, Ownable {
     } else {
       player.hp = player.hp - bigBoss.attackDamage;
     }
+
     emit AttackComplete(bigBoss.hp, player.hp);
   }
 
