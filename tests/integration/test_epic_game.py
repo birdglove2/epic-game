@@ -2,7 +2,6 @@ from brownie import network, EpicGame
 from scripts.helpful_scripts import (
     LOCAL_BLOCKCHAIN_ENVIRONMENTS,
     get_account,
-    fund_with_link,
 )
 from scripts.game_detail import DEFAULT_CHARACTERS
 import pytest
@@ -42,28 +41,12 @@ def test_mint_and_attack_successfully():
         assert attackDamage == attackDamage1
 
     # attack
-
-    # fund with link
-    tx = fund_with_link(epic_game.address, account=account, amount=0.25)
-    tx.wait(1)
-
-    (_, _, _, oldPlayerHp, _, _) = epic_game.getUserNFT(account)
-    (_, _, oldBossHp, _, _) = epic_game.getBigBoss()
-
     tx = epic_game.attackBoss({"from": account})
     tx.wait(1)
-    time.sleep(120)  # wait for fulfill
+    newBossHp = tx.events["AttackComplete"]["newBossHp"]
+    newPlayerHp = tx.events["AttackComplete"]["newPlayerHp"]
 
-    (_, _, _, playerHp, _, playerAttackDamage) = epic_game.getUserNFT(account)
-    (_, _, bossHp, _, bossAttackDamage) = epic_game.getBigBoss()
-    critChance = epic_game.critChance()
-
-    damage = playerAttackDamage
-    if critChance >= 8:
-        damage = playerAttackDamage * 3
-    elif 5 <= critChance <= 7:
-        damage = playerAttackDamage * 2
-
-    print(critChance, damage, bossHp, oldBossHp)
-    assert playerHp == oldPlayerHp - bossAttackDamage
-    assert bossHp == oldBossHp - damage
+    (_, _, _, playerHp, _, _) = epic_game.getUserNFT(account)
+    (_, _, bossHp, _, _) = epic_game.getBigBoss()
+    assert playerHp == newPlayerHp
+    assert bossHp == newBossHp
