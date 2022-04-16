@@ -1,14 +1,6 @@
 from distutils.command.sdist import sdist
 from brownie import EpicGame, config, network
-from scripts.helpful_scripts import get_account, get_contract, fund_with_link
-from web3 import Web3
-
-
-PRODUCT_DUMMY = {
-    "title": "Nike Air Jordan",
-    "description": "A very rare shoes",
-    "price": Web3.toWei(0.01, "ether"),
-}
+from scripts.helpful_scripts import get_account
 
 
 def deploy_epic_game(account=None):
@@ -36,5 +28,4 @@ def deploy_epic_game(account=None):
 
 
 def main():
-    deploy_halffin_factory()
-    create_product()
+    deploy_epic_game()

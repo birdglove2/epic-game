@@ -3,10 +3,8 @@ from brownie import (
     network,
     config,
     Contract,
-    MockV3Aggregator,
     LinkToken,
     VRFCoordinatorMock,
-    interface,
 )
 from web3 import Web3
 
@@ -29,7 +27,6 @@ def get_account(index=None, id=None):
 
 
 contract_to_mock = {
-    "eth_usd_price_feed": MockV3Aggregator,
     "vrf_coordinator": VRFCoordinatorMock,
     "link_token": LinkToken,
 }
@@ -68,7 +65,6 @@ INITIAL_VALUE = 2000 * 10**8
 
 def deploy_mocks(decimals=DECIMALS, initial_value=INITIAL_VALUE):
     account = get_account()
-    MockV3Aggregator.deploy(decimals, initial_value, {"from": account})
     link_token = LinkToken.deploy({"from": account})
     VRFCoordinatorMock.deploy(link_token.address, {"from": account})
     print("Deployed Mock!")
