@@ -1,6 +1,6 @@
-from distutils.command.sdist import sdist
 from brownie import EpicGame, config, network
-from scripts.helpful_scripts import get_account
+from scripts.helpful_scripts import get_account, get_contract
+from scripts.game_detail import BOSS, DEFAULT_CHARACTERS
 
 
 def deploy_and_mint(account=None):
@@ -12,25 +12,25 @@ def deploy_and_mint(account=None):
 
 def deploy_epic_game(account=None):
     account = account if account else get_account()
+
     epic_game = EpicGame.deploy(
-        # default characters
-        ["Mega Charizard Y", "Lucario", "Gengar"],
-        [
-            "bafybeiffh6fk2hujxi653zjnfe2gtj44ben2xvet5tu67ctc3m64e33c3m",
-            "QmV4ybsmVyUNdMDfks5qHFtPwiBMoY6iuoY9TPSTWsET5S",
-            "bafybeicvhxo2s5tk2336rsz2dys6blywigexsrgakyz75ynhgdbjo7rhea",
-        ],
-        [500, 400, 450],
-        [250, 250, 300],
-        # Big Boss
-        "Elon Musk",
-        "https://i.imgur.com/AksR0tt.png",
-        10000,
-        50,
+        get_contract("vrf_coordinator"),
+        get_contract("link_token"),
+        config["networks"][network.show_active()]["keyhash"],
+        config["networks"][network.show_active()]["fee"],
         {"from": account},
         publish_source=config["networks"][network.show_active()].get("verify", False),
     )
     print("Deployed Epic Game!")
+
+    tx = epic_game.initBoss(BOSS, {"from": account})
+    tx.wait(1)
+    print("Initialized Boss!")
+
+    tx = epic_game.initDefaultCharacters(DEFAULT_CHARACTERS, {"from": account})
+    tx.wait(1)
+    print("Initialized Default Characters!")
+
     return epic_game
 
 
