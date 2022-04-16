@@ -4,6 +4,19 @@ from scripts.helpful_scripts import get_account, LOCAL_BLOCKCHAIN_ENVIRONMENTS
 import pytest
 
 
+def test_attack_successfully():
+    pass
+
+
+def test_cannot_attack_if_not_player():
+    if network.show_active() not in LOCAL_BLOCKCHAIN_ENVIRONMENTS:
+        pytest.skip()
+    account = get_account()
+    epic_game = deploy_epic_game(account)
+    with pytest.raises(exceptions.VirtualMachineError):
+        epic_game.attackBoss({"from": account})
+
+
 def test_dead_nft_cannot_attack():
     if network.show_active() not in LOCAL_BLOCKCHAIN_ENVIRONMENTS:
         pytest.skip()
