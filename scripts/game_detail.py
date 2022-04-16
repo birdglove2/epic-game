@@ -1,6 +1,6 @@
 BOSS = (
-    "Elon Musk",
-    "https://i.imgur.com/AksR0tt.png",
+    "Team Rocket",
+    "bafybeiaq4qdqxbxo55rnq6aboftx5fxli6mgt5ao7d54rdtnntb6edtv2y",
     10000,
     10000,
     50,

@@ -50,7 +50,7 @@ contract EpicGame is ERC721, VRFConsumerBase, Ownable {
   mapping(address => uint256) public nftHolders;
 
   event CharacterNFTMinted(address sender, uint256 tokenId, uint256 characterIndex);
-  event AttackInitiate(bytes32 requestId, uint256 critChance);
+  event AttackInitiate(bytes32 requestId, address user);
   event AttackComplete(uint256 newBossHp, uint256 newPlayerHp);
 
   // Data passed in to the contract when it's first created initializing the characters.
@@ -92,12 +92,12 @@ contract EpicGame is ERC721, VRFConsumerBase, Ownable {
   }
 
   modifier onlyPlayer() {
-    require(isUserHasNFT() == true, "You're not the player!");
+    require(isUserHasNFT(msg.sender) == true, "You're not the player!");
     _;
   }
 
-  function isUserHasNFT() public view returns (bool) {
-    uint256 tokenId = nftHolders[msg.sender];
+  function isUserHasNFT(address _user) public view returns (bool) {
+    uint256 tokenId = nftHolders[_user];
     if (tokenId > 0) {
       return true;
     }
@@ -107,7 +107,7 @@ contract EpicGame is ERC721, VRFConsumerBase, Ownable {
   // Users would be able to hit this function and get their NFT based on the
   // characterId they send in!
   function mintCharacterNFT(uint256 _characterIndex) external {
-    require(isUserHasNFT() == false, 'User already has a NFT');
+    require(isUserHasNFT(msg.sender) == false, 'User already has a NFT');
     uint256 newItemId = _tokenIds.current();
     _safeMint(msg.sender, newItemId);
 
@@ -170,7 +170,7 @@ contract EpicGame is ERC721, VRFConsumerBase, Ownable {
 
     // request for critical chance
     bytes32 requestId = requestRandomness(keyHash, oracleFee);
-    emit AttackInitiate(requestId, critChance);
+    emit AttackInitiate(requestId, msg.sender);
   }
 
   // fulfill attacking boss with random critical chance
@@ -207,16 +207,21 @@ contract EpicGame is ERC721, VRFConsumerBase, Ownable {
   }
 
   // revive dead NFT with half of its maxHP
-  function revive() public onlyPlayer {
+  function revive() public payable onlyPlayer {
     uint256 tokenId = nftHolders[msg.sender];
     CharacterAttributes storage player = nftHolderAttributes[tokenId];
     require(player.hp == 0, 'Cannot revive an alive NFT');
     player.hp = player.maxHp / 2;
   }
 
-  function getUserNFT() public view onlyPlayer returns (CharacterAttributes memory) {
-    uint256 tokenId = nftHolders[msg.sender];
-    return nftHolderAttributes[tokenId];
+  function getUserNFT(address _user) public view returns (CharacterAttributes memory) {
+    uint256 tokenId = nftHolders[_user];
+    if (tokenId > 0) {
+      return nftHolderAttributes[tokenId];
+    } else {
+      CharacterAttributes memory emptyStruct;
+      return emptyStruct;
+    }
   }
 
   function getDefaultCharacters() public view returns (CharacterAttributes[] memory) {

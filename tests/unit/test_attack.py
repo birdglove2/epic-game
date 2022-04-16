@@ -41,9 +41,7 @@ def test_attack_with_crit_chance(random_number):
     newBossHp = fulfill_attack_tx.events["AttackComplete"]["newBossHp"]
     newPlayerHp = fulfill_attack_tx.events["AttackComplete"]["newPlayerHp"]
 
-    (_, _, _, playerHp, playerMaxHp, playerAttackDamage) = epic_game.getUserNFT(
-        {"from": account}
-    )
+    (_, _, _, playerHp, playerMaxHp, playerAttackDamage) = epic_game.getUserNFT(account)
     (_, _, bossHp, bossMaxHp, bossAttackDamage) = epic_game.getBigBoss()
 
     critChance = epic_game.critChance()
@@ -75,7 +73,7 @@ def test_cannot_attack_with_dead_nft():
     account = get_account()
     epic_game = deploy_and_mint(account)
 
-    (_, _, _, _, playerMaxHp, _) = epic_game.getUserNFT({"from": account})
+    (_, _, _, _, playerMaxHp, _) = epic_game.getUserNFT(account)
     (_, _, _, _, bossAttackDamage) = epic_game.getBigBoss()
 
     # how many times player can attack before die
@@ -83,7 +81,7 @@ def test_cannot_attack_with_dead_nft():
     for _ in range(count):
         attack(account, epic_game, 0)
 
-    (_, _, _, playerHp, _, _) = epic_game.getUserNFT({"from": account})
+    (_, _, _, playerHp, _, _) = epic_game.getUserNFT(account)
     assert playerHp == 0
 
     with pytest.raises(exceptions.VirtualMachineError):

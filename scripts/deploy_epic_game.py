@@ -31,8 +31,9 @@ def deploy_epic_game(account=None):
     tx.wait(1)
     print("Initialized Default Characters!")
 
-    fund_with_link(epic_game.address, amount=10)
+    fund_with_link(epic_game.address, amount=2)
 
+    print("Epic game @ ", epic_game.address)
     return epic_game
 
 

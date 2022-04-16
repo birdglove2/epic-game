@@ -16,7 +16,7 @@ def test_user_can_mint_character():
     tx = epic_game.mintCharacterNFT(index1, {"from": account})
     tx.wait(1)
 
-    character_attributes = epic_game.getUserNFT({"from": account})
+    character_attributes = epic_game.getUserNFT(account)
     (characterIndex, name, imageURI, hp, maxHp, attackDamage) = character_attributes
 
     assert characterIndex == 1
