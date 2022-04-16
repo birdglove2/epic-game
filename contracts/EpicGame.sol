@@ -98,6 +98,7 @@ contract EpicGame is ERC721 {
     // Users would be able to hit this function and get their NFT based on the
     // characterId they send in!
     function mintCharacterNFT(uint256 _characterIndex) external {
+        require(isUserHasNFT() == false, "User already has a NFT");
         uint256 newItemId = _tokenIds.current();
         _safeMint(msg.sender, newItemId);
 
@@ -195,23 +196,23 @@ contract EpicGame is ERC721 {
 
     }
 
-    function checkIfUserHasNFT()
+    function isUserHasNFT() public view returns (bool){
+       uint256 tokenId = nftHolders[msg.sender];
+        if (tokenId > 0) {
+            return true;
+        }
+        return false;
+    }
+
+
+    function getUserNFT()
         public
         view
         returns (CharacterAttributes memory)
-    {
-        // Get the tokenId of the user's character NFT
+    {   
+        require(isUserHasNFT() == true, "User has no NFT!");
         uint256 tokenId = nftHolders[msg.sender];
-
-        // If the user has a tokenId in the map, return their character.
-        if (tokenId > 0) {
-            return nftHolderAttributes[tokenId];
-
-            // else, return an empty character.
-        } else {
-            CharacterAttributes memory emptyStruct;
-            return emptyStruct;
-        }
+        return nftHolderAttributes[tokenId];
     }
 
     function getAllDefaultCharacters()
