@@ -5,14 +5,14 @@ import './libraries/Base64.sol';
 import '@openzeppelin/contracts/token/ERC721/ERC721.sol';
 import '@openzeppelin/contracts/utils/Counters.sol';
 import '@openzeppelin/contracts/utils/Counters.sol';
-import '@openzeppelin/contracts/access/Ownable.sol';
 import '@chainlink/contracts/src/v0.8/VRFConsumerBase.sol';
 
-contract EpicGame is ERC721, VRFConsumerBase, Ownable {
+contract EpicGame is ERC721 {
   // The tokenId is the NFTs unique identifier, it's just a number that goes 1, 2, 3, ...
   using Counters for Counters.Counter;
   Counters.Counter private _tokenIds;
 
+  address public owner;
   BigBoss public bigBoss;
   struct BigBoss {
     string name;
@@ -31,7 +31,7 @@ contract EpicGame is ERC721, VRFConsumerBase, Ownable {
     uint256 attackDamage;
   }
 
-  uint256 public critChance;
+  // uint256 public critChance;
 
   // For VRFCoordinator
   bytes32 internal keyHash;
@@ -50,20 +50,16 @@ contract EpicGame is ERC721, VRFConsumerBase, Ownable {
   mapping(address => uint256) public nftHolders;
 
   event CharacterNFTMinted(address sender, uint256 tokenId, uint256 characterIndex);
-  event AttackInitiate(bytes32 requestId, address user);
   event AttackComplete(uint256 newBossHp, uint256 newPlayerHp);
 
-  // Data passed in to the contract when it's first created initializing the characters.
-  // We're going to actually pass these values in from run.js.
-  constructor(
-    address _VRFCoordinator,
-    address _LinkToken,
-    bytes32 _keyHash,
-    uint256 _oracleFee
-  ) ERC721('Heroes', 'HERO') VRFConsumerBase(_VRFCoordinator, _LinkToken) {
-    keyHash = _keyHash;
-    oracleFee = _oracleFee;
+  constructor() ERC721('Pokemon', 'POKEMON') {
+    owner = msg.sender;
     _tokenIds.increment(); // just make it starts at 1 instead of 0
+  }
+
+  modifier onlyOwner() {
+    require(msg.sender == owner, 'You are not the owner');
+    _;
   }
 
   function initBoss(BigBoss memory boss) public onlyOwner {
@@ -168,26 +164,8 @@ contract EpicGame is ERC721, VRFConsumerBase, Ownable {
     require(player.hp > 0, 'player has no HP left');
     require(bigBoss.hp > 0, 'Big Boss is already dead');
 
-    // request for critical chance
-    bytes32 requestId = requestRandomness(keyHash, oracleFee);
-    emit AttackInitiate(requestId, msg.sender);
-  }
-
-  // fulfill attacking boss with random critical chance
-  function fulfillRandomness(bytes32 requestId, uint256 randomness) internal override {
-    // Get the state of the player's NFT.
-    uint256 tokenId = nftHolders[tx.origin];
-    CharacterAttributes storage player = nftHolderAttributes[tokenId];
-
-    critChance = randomness % 10;
-
-    // calculate critical damage for player
-    uint256 damage = player.attackDamage;
-    if (critChance >= 8) {
-      damage = player.attackDamage * 3;
-    } else if (critChance >= 5 && critChance <= 7) {
-      damage = player.attackDamage * 2;
-    }
+    // calculate critical damage
+    uint256 damage = calculateCriticalDamage(player.attackDamage);
 
     // Allow player to attack boss with critable damage
     if (bigBoss.hp < damage) {
@@ -204,6 +182,17 @@ contract EpicGame is ERC721, VRFConsumerBase, Ownable {
     }
 
     emit AttackComplete(bigBoss.hp, player.hp);
+  }
+
+  function calculateCriticalDamage(uint256 _damage) internal view returns (uint256) {
+    uint256 critChance = random() % 10;
+    uint256 damage = _damage;
+    if (critChance >= 8) {
+      damage = _damage * 3;
+    } else if (critChance >= 5 && critChance <= 7) {
+      damage = _damage * 2;
+    }
+    return damage;
   }
 
   // revive dead NFT with half of its maxHP
@@ -230,5 +219,9 @@ contract EpicGame is ERC721, VRFConsumerBase, Ownable {
 
   function getBigBoss() public view returns (BigBoss memory) {
     return bigBoss;
+  }
+
+  function random() public view returns (uint256) {
+    return uint256(keccak256(abi.encodePacked(block.difficulty, block.timestamp)));
   }
 }

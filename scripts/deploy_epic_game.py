@@ -14,10 +14,6 @@ def deploy_epic_game(account=None):
     account = account if account else get_account()
 
     epic_game = EpicGame.deploy(
-        get_contract("vrf_coordinator"),
-        get_contract("link_token"),
-        config["networks"][network.show_active()]["keyhash"],
-        config["networks"][network.show_active()]["fee"],
         {"from": account},
         publish_source=config["networks"][network.show_active()].get("verify", False),
     )
