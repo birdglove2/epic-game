@@ -183,9 +183,9 @@ contract EpicGame is ERC721, VRFConsumerBase, Ownable {
 
     // calculate critical damage for player
     uint256 damage = player.attackDamage;
-    if (critChance >= 9) {
+    if (critChance >= 8) {
       damage = player.attackDamage * 3;
-    } else if (critChance >= 6 && critChance <= 8) {
+    } else if (critChance >= 5 && critChance <= 7) {
       damage = player.attackDamage * 2;
     }
 
