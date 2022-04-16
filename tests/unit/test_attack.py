@@ -8,7 +8,14 @@ from scripts.helpful_scripts import (
 import pytest
 
 
-def test_attack_successfully():
+def test_attack_with_different_crit_chance():
+    assert test_attack_with_crit_chance(777) == 7
+    assert test_attack_with_crit_chance(999) == 9
+    assert test_attack_with_crit_chance(0) == 0
+    assert test_attack_with_crit_chance(123) == 3
+
+
+def test_attack_with_crit_chance(random_number=100):
     if network.show_active() not in LOCAL_BLOCKCHAIN_ENVIRONMENTS:
         pytest.skip()
     account = get_account()
@@ -19,10 +26,9 @@ def test_attack_successfully():
     requestId = attack_tx.events["AttackInitiate"]["requestId"]
 
     fulfill_attack_tx = get_contract("vrf_coordinator").callBackWithRandomness(
-        requestId, 4, epic_game.address, {"from": get_account()}
+        requestId, random_number, epic_game.address, {"from": get_account()}
     )
     fulfill_attack_tx.wait(1)
-    # print("call trace", fulfill_attack_tx.call_trace())
     newBossHp = fulfill_attack_tx.events["AttackComplete"]["newBossHp"]
     newPlayerHp = fulfill_attack_tx.events["AttackComplete"]["newPlayerHp"]
 
@@ -30,9 +36,19 @@ def test_attack_successfully():
         {"from": account}
     )
     (_, _, bossHp, bossMaxHp, bossAttackDamage) = epic_game.getBigBoss()
+
+    critChance = epic_game.critChance()
+    assert critChance == random_number % 10
+
+    damage = playerAttackDamage
+    if critChance >= 9:
+        damage = playerAttackDamage * 3
+    elif 6 <= critChance <= 8:
+        damage = playerAttackDamage * 2
+
     assert playerHp == newPlayerHp == playerMaxHp - bossAttackDamage
-    assert bossHp == newBossHp == bossMaxHp - playerAttackDamage
-    assert epic_game.critChance() == 4
+    assert bossHp == newBossHp == bossMaxHp - damage
+    return critChance
 
 
 def test_cannot_attack_if_not_player():
