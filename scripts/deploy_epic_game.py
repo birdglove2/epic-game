@@ -3,6 +3,13 @@ from brownie import EpicGame, config, network
 from scripts.helpful_scripts import get_account
 
 
+def deploy_and_mint(account=None):
+    epic_game = deploy_epic_game(account)
+    tx = epic_game.mintCharacterNFT(1, {"from": account})
+    tx.wait(1)
+    return epic_game
+
+
 def deploy_epic_game(account=None):
     account = account if account else get_account()
     epic_game = EpicGame.deploy(
