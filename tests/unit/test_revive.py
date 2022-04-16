@@ -1,7 +1,7 @@
 from brownie import network, exceptions
 from scripts.deploy_epic_game import deploy_epic_game, deploy_and_mint
 from scripts.helpful_scripts import get_account, LOCAL_BLOCKCHAIN_ENVIRONMENTS
-from test_attack import test_dead_nft_cannot_attack
+from test_attack import test_cannot_attack_with_dead_nft
 import pytest
 
 
@@ -9,7 +9,7 @@ def test_revive_dead_nft():
     if network.show_active() not in LOCAL_BLOCKCHAIN_ENVIRONMENTS:
         pytest.skip()
     account = get_account()
-    epic_game = test_dead_nft_cannot_attack()
+    epic_game = test_cannot_attack_with_dead_nft()
 
     epic_game.revive({"from": account})
     (_, _, _, playerHp, playerMaxHp, _) = epic_game.getUserNFT({"from": account})
