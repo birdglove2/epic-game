@@ -53,6 +53,7 @@ contract EpicGame is ERC721 {
     );
     event AttackComplete(uint256 newBossHp, uint256 newPlayerHp);
 
+
     // Data passed in to the contract when it's first created initializing the characters.
     // We're going to actually pass these values in from run.js.
     constructor(
@@ -94,6 +95,22 @@ contract EpicGame is ERC721 {
         }
         _tokenIds.increment(); // just make it starts at 1 instead of 0
     }
+
+
+
+    modifier onlyPlayer() {
+      require(isUserHasNFT() == true, "You're not the player!");
+        _;
+    }
+
+    function isUserHasNFT() public view returns (bool){
+       uint256 tokenId = nftHolders[msg.sender];
+        if (tokenId > 0) {
+            return true;
+        }
+        return false;
+    }
+    
 
     // Users would be able to hit this function and get their NFT based on the
     // characterId they send in!
@@ -165,7 +182,7 @@ contract EpicGame is ERC721 {
         return output;
     }
 
-    function attackBoss() public {
+    function attackBoss() public onlyPlayer {
         // Get the state of the player's NFT.
         uint256 tokenId = nftHolders[msg.sender];
         CharacterAttributes storage player = nftHolderAttributes[tokenId];
@@ -193,22 +210,16 @@ contract EpicGame is ERC721 {
 
         emit AttackComplete(bigBoss.hp, player.hp);
 
-
     }
 
-    function isUserHasNFT() public view returns (bool){
-       uint256 tokenId = nftHolders[msg.sender];
-        if (tokenId > 0) {
-            return true;
-        }
-        return false;
-    }
+  
 
 
     function getUserNFT()
         public
         view
-        returns (CharacterAttributes memory)
+        onlyPlayer
+        returns (CharacterAttributes memory) 
     {   
         require(isUserHasNFT() == true, "User has no NFT!");
         uint256 tokenId = nftHolders[msg.sender];
@@ -225,5 +236,14 @@ contract EpicGame is ERC721 {
 
     function getBigBoss() public view returns (BigBoss memory) {
         return bigBoss;
+    }
+    
+
+    // revive dead NFT with half of its maxHP
+    function revive() public onlyPlayer {
+        uint256 tokenId = nftHolders[msg.sender];
+        CharacterAttributes storage player = nftHolderAttributes[tokenId];        
+        require(player.hp == 0, "Cannot revive an alive NFT");
+        player.hp = player.maxHp / 2;
     }
 }
