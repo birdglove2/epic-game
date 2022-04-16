@@ -5,7 +5,20 @@ import pytest
 
 
 def test_attack_successfully():
-    pass
+    if network.show_active() not in LOCAL_BLOCKCHAIN_ENVIRONMENTS:
+        pytest.skip()
+    account = get_account()
+    epic_game = deploy_and_mint(account)
+
+    epic_game.attackBoss({"from": account})
+
+    (_, _, _, playerHp, playerMaxHp, playerAttackDamage) = epic_game.getUserNFT(
+        {"from": account}
+    )
+    (_, _, bossHp, bossMaxHp, bossAttackDamage) = epic_game.getBigBoss()
+
+    assert playerHp == playerMaxHp - bossAttackDamage
+    assert bossHp == bossMaxHp - playerAttackDamage
 
 
 def test_cannot_attack_if_not_player():
