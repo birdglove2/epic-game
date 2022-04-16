@@ -175,54 +175,40 @@ contract EpicGame is ERC721, VRFConsumerBase, Ownable {
     // bytes32 requestId = requestRandomness(keyHash, oracleFee);
   }
 
-  //   // fulfill attacking boss with random critical chance
+  // fulfill attacking boss with random critical chance
   function fulfillRandomness(bytes32 requestId, uint256 randomness) internal override {
     critChance = uint8(randomness % 10);
-  }
 
-  //     emit AttackInitiate(requestId, critChance);
+    emit AttackInitiate(requestId, critChance);
 
-  //     // Get the state of the player's NFT.
-  //     uint256 tokenId = nftHolders[msg.sender];
-  //     CharacterAttributes storage player = nftHolderAttributes[tokenId];
-
-  //     // calculate critical damage for player
-  //     uint256 damage = player.attackDamage;
-  //     if (critChance >= 5 && critChance <= 8) {
-  //       damage = (player.attackDamage * 2);
-  //     } else if (critChance >= 9) {
-  //       damage = player.attackDamage * 3;
-  //     } else {
-  //       damage = player.attackDamage;
-  //     }
-
-  //     // Allow player to attack boss.
-  //     if (bigBoss.hp < damage) {
-  //       bigBoss.hp = 0;
-  //     } else {
-  //       bigBoss.hp = bigBoss.hp - damage;
-  //     }
-
-  //     // Allow boss to attack player.
-  //     if (player.hp < bigBoss.attackDamage) {
-  //       player.hp = 0;
-  //     } else {
-  //       player.hp = player.hp - bigBoss.attackDamage;
-  //     }
-  //     emit AttackComplete(bigBoss.hp, player.hp);
-  //   }
-
-  function getUserNFT() public view onlyPlayer returns (CharacterAttributes memory) {
+    // Get the state of the player's NFT.
     uint256 tokenId = nftHolders[msg.sender];
-    return nftHolderAttributes[tokenId];
-  }
+    CharacterAttributes storage player = nftHolderAttributes[tokenId];
 
-  function getAllDefaultCharacters() public view returns (CharacterAttributes[] memory) {
-    return defaultCharacters;
-  }
+    // calculate critical damage for player
+    uint256 damage = player.attackDamage;
+    if (critChance >= 5 && critChance <= 8) {
+      damage = (player.attackDamage * 2);
+    } else if (critChance >= 9) {
+      damage = player.attackDamage * 3;
+    } else {
+      damage = player.attackDamage;
+    }
 
-  function getBigBoss() public view returns (BigBoss memory) {
-    return bigBoss;
+    // Allow player to attack boss.
+    if (bigBoss.hp < damage) {
+      bigBoss.hp = 0;
+    } else {
+      bigBoss.hp = bigBoss.hp - damage;
+    }
+
+    // Allow boss to attack player.
+    if (player.hp < bigBoss.attackDamage) {
+      player.hp = 0;
+    } else {
+      player.hp = player.hp - bigBoss.attackDamage;
+    }
+    emit AttackComplete(bigBoss.hp, player.hp);
   }
 
   // revive dead NFT with half of its maxHP
@@ -231,5 +217,18 @@ contract EpicGame is ERC721, VRFConsumerBase, Ownable {
     CharacterAttributes storage player = nftHolderAttributes[tokenId];
     require(player.hp == 0, 'Cannot revive an alive NFT');
     player.hp = player.maxHp / 2;
+  }
+
+  function getUserNFT() public view onlyPlayer returns (CharacterAttributes memory) {
+    uint256 tokenId = nftHolders[msg.sender];
+    return nftHolderAttributes[tokenId];
+  }
+
+  function getDefaultCharacters() public view returns (CharacterAttributes[] memory) {
+    return defaultCharacters;
+  }
+
+  function getBigBoss() public view returns (BigBoss memory) {
+    return bigBoss;
   }
 }
