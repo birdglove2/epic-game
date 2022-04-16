@@ -3,7 +3,11 @@ import { abi } from '../utils/MyEpicGame.json';
 import { ethers } from 'ethers';
 
 export const useContract = () => {
-  const CONTRACT_ADDRESS = '0x047A42ef33E44628D6149023324BB82fb9f14d6a';
+  // v1 contract address
+  // const CONTRACT_ADDRESS = '0x047A42ef33E44628D6149023324BB82fb9f14d6a';
+
+  // v2
+  const CONTRACT_ADDRESS = '0x208F0A6500DDf63E959E2B933C16Bdf7e19e26D9';
   const [gameContract, setGameContract] = useState(null);
 
   useEffect(() => {
