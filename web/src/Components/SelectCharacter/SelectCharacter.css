@@ -48,11 +48,10 @@
   bottom: 0;
   width: 100%;
   height: 40px;
-  border-bottom-left-radius: 10px;
-  border-bottom-right-radius: 10px;
+  border-radius: 20px;
   border: none;
   cursor: pointer;
-  background-color: rgb(32, 129, 226);
+  background-color: rgba(104, 234, 61, 0.698);
   color: white;
   font-weight: bold;
   font-size: 16px;
