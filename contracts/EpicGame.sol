@@ -4,10 +4,11 @@ pragma solidity ^0.8.0;
 import './libraries/Base64.sol';
 import '@openzeppelin/contracts/token/ERC721/ERC721.sol';
 import '@openzeppelin/contracts/utils/Counters.sol';
-import '@openzeppelin/contracts/utils/Strings.sol';
+import '@openzeppelin/contracts/utils/Counters.sol';
+import '@openzeppelin/contracts/access/Ownable.sol';
 import '@chainlink/contracts/src/v0.8/VRFConsumerBase.sol';
 
-contract EpicGame is ERC721, VRFConsumerBase {
+contract EpicGame is ERC721, VRFConsumerBase, Ownable {
   // The tokenId is the NFTs unique identifier, it's just a number that goes 1, 2, 3, ...
   using Counters for Counters.Counter;
   Counters.Counter private _tokenIds;
@@ -55,44 +56,39 @@ contract EpicGame is ERC721, VRFConsumerBase {
   // Data passed in to the contract when it's first created initializing the characters.
   // We're going to actually pass these values in from run.js.
   constructor(
-    string[] memory characterNames,
-    string[] memory characterImageURIs,
-    uint256[] memory characterHp,
-    uint256[] memory characterAttackDmg,
-    string memory bossName,
-    string memory bossImageURI,
-    uint256 bossHp,
-    uint256 bossAttackDamage,
     address _VRFCoordinator,
     address _LinkToken,
-    bytes32 _keyhash
+    bytes32 _keyHash,
+    uint256 _oracleFee
   ) ERC721('Heroes', 'HERO') VRFConsumerBase(_VRFCoordinator, _LinkToken) {
-    keyHash = _keyhash;
-    oracleFee = 0.1 * 10**18; // 0.1 Link
+    keyHash = _keyHash;
+    oracleFee = _oracleFee;
+    _tokenIds.increment(); // just make it starts at 1 instead of 0
+  }
 
+  function initBoss(BigBoss memory boss) public onlyOwner {
     bigBoss = BigBoss({
-      name: bossName,
-      imageURI: bossImageURI,
-      hp: bossHp,
-      maxHp: bossHp,
-      attackDamage: bossAttackDamage
+      name: boss.name,
+      imageURI: boss.imageURI,
+      hp: boss.hp,
+      maxHp: boss.maxHp,
+      attackDamage: boss.attackDamage
     });
+  }
 
-    // Loop through all the characters, and save their values in our contract so
-    // we can use them later when we mint our NFTs.
-    for (uint256 i = 0; i < characterNames.length; i += 1) {
+  function initDefaultCharacters(CharacterAttributes[] memory characters) public onlyOwner {
+    for (uint256 i = 0; i < characters.length; i += 1) {
       defaultCharacters.push(
         CharacterAttributes({
-          characterIndex: i,
-          name: characterNames[i],
-          imageURI: characterImageURIs[i],
-          hp: characterHp[i],
-          maxHp: characterHp[i],
-          attackDamage: characterAttackDmg[i]
+          characterIndex: characters[i].characterIndex,
+          name: characters[i].name,
+          imageURI: characters[i].imageURI,
+          hp: characters[i].hp,
+          maxHp: characters[i].maxHp,
+          attackDamage: characters[i].attackDamage
         })
       );
     }
-    _tokenIds.increment(); // just make it starts at 1 instead of 0
   }
 
   modifier onlyPlayer() {
@@ -176,43 +172,45 @@ contract EpicGame is ERC721, VRFConsumerBase {
     // Make sure the boss has more than 0 HP.
     require(bigBoss.hp > 0, 'Big Boss is already dead');
 
-    bytes32 requestId = requestRandomness(keyHash, oracleFee);
+    // bytes32 requestId = requestRandomness(keyHash, oracleFee);
   }
 
-  // fulfill attacking boss with random critical chance
+  //   // fulfill attacking boss with random critical chance
   function fulfillRandomness(bytes32 requestId, uint256 randomness) internal override {
     critChance = uint8(randomness % 10);
-    emit AttackInitiate(requestId, critChance);
-
-    // Get the state of the player's NFT.
-    uint256 tokenId = nftHolders[msg.sender];
-    CharacterAttributes storage player = nftHolderAttributes[tokenId];
-
-    // calculate critical damage for player
-    uint256 damage = player.attackDamage;
-    if (critChance >= 5 && critChance <= 8) {
-      damage = (player.attackDamage * 2);
-    } else if (critChance >= 9) {
-      damage = player.attackDamage * 3;
-    } else {
-      damage = player.attackDamage;
-    }
-
-    // Allow player to attack boss.
-    if (bigBoss.hp < damage) {
-      bigBoss.hp = 0;
-    } else {
-      bigBoss.hp = bigBoss.hp - damage;
-    }
-
-    // Allow boss to attack player.
-    if (player.hp < bigBoss.attackDamage) {
-      player.hp = 0;
-    } else {
-      player.hp = player.hp - bigBoss.attackDamage;
-    }
-    emit AttackComplete(bigBoss.hp, player.hp);
   }
+
+  //     emit AttackInitiate(requestId, critChance);
+
+  //     // Get the state of the player's NFT.
+  //     uint256 tokenId = nftHolders[msg.sender];
+  //     CharacterAttributes storage player = nftHolderAttributes[tokenId];
+
+  //     // calculate critical damage for player
+  //     uint256 damage = player.attackDamage;
+  //     if (critChance >= 5 && critChance <= 8) {
+  //       damage = (player.attackDamage * 2);
+  //     } else if (critChance >= 9) {
+  //       damage = player.attackDamage * 3;
+  //     } else {
+  //       damage = player.attackDamage;
+  //     }
+
+  //     // Allow player to attack boss.
+  //     if (bigBoss.hp < damage) {
+  //       bigBoss.hp = 0;
+  //     } else {
+  //       bigBoss.hp = bigBoss.hp - damage;
+  //     }
+
+  //     // Allow boss to attack player.
+  //     if (player.hp < bigBoss.attackDamage) {
+  //       player.hp = 0;
+  //     } else {
+  //       player.hp = player.hp - bigBoss.attackDamage;
+  //     }
+  //     emit AttackComplete(bigBoss.hp, player.hp);
+  //   }
 
   function getUserNFT() public view onlyPlayer returns (CharacterAttributes memory) {
     uint256 tokenId = nftHolders[msg.sender];
