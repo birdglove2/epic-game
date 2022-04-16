@@ -73,11 +73,6 @@ def deploy_mocks(decimals=DECIMALS, initial_value=INITIAL_VALUE):
 def fund_with_link(contract_address, account=None, link_token=None, amount=0.1):
     account = account if account else get_account()
 
-    # interface way
-    # link_token_contract = interface.LinkTokenInterface(link_token.address)
-    # tx = link_token_contract.transfer(
-    #     contract_address, amount, {"from": account})
-
     link_token = link_token if link_token else get_contract("link_token")
     tx = link_token.transfer(
         contract_address, Web3.toWei(amount, "ether"), {"from": account}

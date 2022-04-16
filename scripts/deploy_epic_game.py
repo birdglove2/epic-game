@@ -1,5 +1,5 @@
 from brownie import EpicGame, config, network
-from scripts.helpful_scripts import get_account, get_contract
+from scripts.helpful_scripts import get_account, get_contract, fund_with_link
 from scripts.game_detail import BOSS, DEFAULT_CHARACTERS
 
 
@@ -30,6 +30,8 @@ def deploy_epic_game(account=None):
     tx = epic_game.initDefaultCharacters(DEFAULT_CHARACTERS, {"from": account})
     tx.wait(1)
     print("Initialized Default Characters!")
+
+    fund_with_link(epic_game.address, amount=1)
 
     return epic_game
 
