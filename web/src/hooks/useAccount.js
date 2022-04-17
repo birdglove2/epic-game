@@ -46,20 +46,9 @@ export const useAccount = () => {
     }
   };
 
-  const checkNetwork = async () => {
-    try {
-      if (window.ethereum.networkVersion !== '4') {
-        alert('Please connect to Rinkeby!');
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   useEffect(() => {
     const onLoad = async () => {
       await checkIfWalletIsConnected();
-      await checkNetwork();
     };
     window.addEventListener('load', onLoad);
     return () => window.removeEventListener('load', onLoad);

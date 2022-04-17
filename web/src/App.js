@@ -1,3 +1,4 @@
+import './Components/Arena/Arena.css';
 import { useState, useEffect } from 'react';
 import twitterLogo from 'assets/twitter-logo.svg';
 import githubLogo from 'assets/GitHub-Mark-32px.png';
@@ -5,7 +6,7 @@ import './App.css';
 import SelectCharacter from 'Components/SelectCharacter';
 import LoadingIndicator from 'Components/LoadingIndicator';
 import Arena from 'Components/Arena';
-import { useContract, useAccount } from 'hooks';
+import { useContract, useAccount, useNetwork } from 'hooks';
 
 // Constants
 const TWITTER_HANDLE = '_buildspace';
@@ -16,6 +17,7 @@ const App = () => {
   const [characterNFT, setCharacterNFT] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const { currentAccount, connectWallet } = useAccount();
+  const { checkNetwork } = useNetwork();
   const { gameContract, transformCharacterData } = useContract();
 
   useEffect(() => {
@@ -64,6 +66,7 @@ const App = () => {
 
   return (
     <div className="text-center justify-center">
+      {checkNetwork()}
       <div className="flex flex-col justify-center items-center mx-5 sm:mx-10 3xl:mx-1/10 4xl:mx-1/6 5xl:mx-1/5 mb-20 my-10">
         <div>
           <div className="p-4 mb-5">
@@ -72,7 +75,6 @@ const App = () => {
             <p className="text-2xl font-bold">(╯°□°)╯︵◓</p>
           </div>
           <img src="https://wallpaperaccess.com/full/109332.jpg" alt="first img" />
-
           {renderContent()}
         </div>
       </div>
