@@ -17,16 +17,20 @@
 
 ## Smartcontract
 
-Compile
+##### Compile
+
 `brownie compile`
 
-Deploy on rinkeby
+##### Deploy on rinkeby
+
 `make deploy` or `brownie run scripts/deploy_epic_game.py --network rinkeby`
 
-Unit Test
+##### Unit Test
+
 `brownie test`
 
-Integration Test
+##### Integration Test
+
 `brownie test --network rinkeby`
 
 ## Website:
