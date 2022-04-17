@@ -2,23 +2,36 @@ import React, { useEffect, useState } from 'react';
 import './Arena.css';
 import { useContract } from '../../hooks/useContract';
 import LoadingIndicator from '../LoadingIndicator';
+import HealthBar from 'Components/HealthBar';
+import PokemonCard from 'Components/PokemonCard';
+import BossCard from 'Components/BossCard';
 
 const Arena = ({ characterNFT, setCharacterNFT }) => {
   const { gameContract, transformCharacterData } = useContract();
   const [boss, setBoss] = useState(null);
   const [attackState, setAttackState] = useState('');
   const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+
+  function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  const attackAnimate = async () => {
+    setAttackState('attacking');
+    await sleep(500);
+    setAttackState('hit');
+    await sleep(500);
+  };
 
   const runAttackAction = async () => {
     try {
       if (gameContract) {
-        setAttackState('attacking');
+        await attackAnimate();
         console.log('Attacking boss...');
         const attackTxn = await gameContract.attackBoss();
         await attackTxn.wait();
         console.log('attackTxn:', attackTxn);
-        setAttackState('hit');
-
         setShowToast(true);
         setTimeout(() => {
           setShowToast(false);
@@ -26,7 +39,8 @@ const Arena = ({ characterNFT, setCharacterNFT }) => {
       }
     } catch (error) {
       console.error('Error attacking boss:', error);
-      setAttackState('');
+    } finally {
+      setAttackState('AttackCompleted');
     }
   };
 
@@ -37,10 +51,24 @@ const Arena = ({ characterNFT, setCharacterNFT }) => {
       setBoss(transformCharacterData(bossTxn));
     };
 
-    const onAttackComplete = (newBossHp, newPlayerHp) => {
+    const onAttackComplete = (newBossHp, newPlayerHp, _damage, critChance) => {
       const bossHp = newBossHp.toNumber();
       const playerHp = newPlayerHp.toNumber();
+      const damage = _damage.toNumber();
+
+      let msg = '';
+      if (critChance >= 8) {
+        msg = `💥 CRITICAL HIT! Triple Damage, ${boss.name} was hit for ${damage}!`;
+      } else if (critChance >= 5) {
+        msg = `💥 CRITICAL HIT! Double Damage, ${boss.name} was hit for ${damage}!`;
+      } else {
+        msg = `💥 ${boss.name} was hit for ${damage}!`;
+      }
+      setToastMessage(msg);
+
+      console.log(msg);
       console.log(`AttackComplete - BossHp: ${bossHp} Player Hp: ${playerHp}`);
+
       setBoss((prevState) => ({ ...prevState, hp: bossHp }));
       setCharacterNFT((prevState) => ({ ...prevState, hp: playerHp }));
     };
@@ -58,62 +86,49 @@ const Arena = ({ characterNFT, setCharacterNFT }) => {
   }, [gameContract]);
 
   return (
-    <div className="arena-container">
+    <div className="flex flex-col items-center mt-10">
       {boss && characterNFT && (
         <div id="toast" className={showToast ? 'show' : ''}>
-          <div id="desc">{`💥 ${boss.name} was hit for ${characterNFT.attackDamage}!`}</div>
+          <div id="desc">{toastMessage}</div>
         </div>
       )}
-
       {boss && (
-        <div className="boss-container">
-          <div className={`boss-content`}>
-            <h2>🔥 {boss.name} 🔥</h2>
-            <div className="image-content">
-              <img src={boss.imageURI} alt={`Boss ${boss.name}`} />
-              <div className="health-bar">
-                <progress value={boss.hp} max={boss.maxHp} />
-                <p>{`${boss.hp} / ${boss.maxHp} HP`}</p>
-              </div>
-            </div>
-          </div>
-          <div className="attack-container">
-            <button className="cta-button" onClick={runAttackAction}>
-              {`💥 Attack ${boss.name}`}
-            </button>
-          </div>
-          {attackState === 'attacking' && (
-            <div className="loading-indicator">
+        <div className="flex flex-col justify-around mb-12">
+          <BossCard attackState={attackState} boss={boss} />
+          {attackState === 'AttackInitiated' && (
+            <div className="mt-10">
               <LoadingIndicator />
-              <p>Attacking ⚔️</p>
+              <p>Attacking... ⚔️</p>
             </div>
           )}
         </div>
       )}
 
-      {characterNFT && (
-        <div className="players-container">
-          <div className="player-container">
-            <h2>Your Character</h2>
-            <div className="player">
-              <div className="image-content">
-                <h2>{characterNFT.name}</h2>
-                <img
-                  src={`https://cloudflare-ipfs.com/ipfs/${characterNFT.imageURI}`}
-                  alt={`Character ${characterNFT.name}`}
-                />
-                <div className="health-bar">
-                  <progress value={characterNFT.hp} max={characterNFT.maxHp} />
-                  <p>{`${characterNFT.hp} / ${characterNFT.maxHp} HP`}</p>
-                </div>
-              </div>
-              <div className="stats">
-                <h4>{`⚔️ Attack Damage: ${characterNFT.attackDamage}`}</h4>
-              </div>
-            </div>
-          </div>
-        </div>
+      {boss && characterNFT && (
+        <>
+          <button
+            disabled={attackState === 'attacking' || characterNFT.hp === 0}
+            className={`text-xl font-bold w-96 mb-10 py-5 px-20 rounded-xl ${
+              attackState === 'attacking' || characterNFT.hp === 0
+                ? 'bg-gray-500'
+                : 'bg-red-800 hover:bg-red-900'
+            }`}
+            onClick={runAttackAction}
+          >
+            {`💥 Attack 💥 `}
+          </button>
+          {characterNFT.hp === 0 && (
+            <button
+              className={`text-xl font-bold w-96 mb-10 py-5 px-20 rounded-xl bg-orange-500 hover:bg-orange-900`}
+              onClick={runReviveAction}
+            >
+              {` Revive `}
+            </button>
+          )}
+        </>
       )}
+
+      {characterNFT && <PokemonCard attackState={attackState} character={characterNFT} />}
     </div>
   );
 };

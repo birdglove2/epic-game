@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import './SelectCharacter.css';
-import { useContract } from '../../hooks/useContract';
+import { useContract, useAccount } from 'hooks';
 import '../LoadingIndicator';
 import LoadingIndicator from '../LoadingIndicator';
 
@@ -8,9 +8,9 @@ const SelectCharacter = ({ setCharacterNFT }) => {
   const [characters, setCharacters] = useState([]);
   const { gameContract, transformCharacterData } = useContract();
   const [mintingCharacter, setMintingCharacter] = useState(false);
+  const { currentAccount } = useAccount();
 
   const mintCharacterNFTAction = async (characterId) => {
-    console.log('heelo ', characterId);
     try {
       if (gameContract) {
         console.log('Minting character in progress...');
@@ -30,17 +30,15 @@ const SelectCharacter = ({ setCharacterNFT }) => {
     const getCharacters = async () => {
       try {
         console.log('Getting contract characters to mint');
-
-        const charactersTxn = await gameContract.getAllDefaultCharacters();
+        const charactersTxn = await gameContract.getDefaultCharacters();
         console.log('charactersTxn:', charactersTxn);
-
         const characters = charactersTxn.map((charactersData) => {
           return transformCharacterData(charactersData);
         });
 
         setCharacters(characters);
       } catch (err) {
-        console.error('Something went wrong fetching characters');
+        console.error('Something went wrong fetching characters', err.message);
       }
     };
 
@@ -55,7 +53,7 @@ const SelectCharacter = ({ setCharacterNFT }) => {
        * and set it in state to move onto the Arena
        */
       if (gameContract) {
-        const characterNFT = await gameContract.checkIfUserHasNFT();
+        const characterNFT = await gameContract.getUserNFT(currentAccount);
         console.log('CharacterNFT: ', characterNFT);
         setCharacterNFT(transformCharacterData(characterNFT));
       }
@@ -80,15 +78,15 @@ const SelectCharacter = ({ setCharacterNFT }) => {
           <div className="name-container">
             <p>{character.name}</p>
           </div>
-          <img
-            src={`https://cloudflare-ipfs.com/ipfs/${character.imageURI}`}
-            alt={character.name}
-          />
-          <button
-            style={{ border: '1px solid red', cursor: 'pointer', zIndex: 2 }}
-            className="character-mint-button"
-            onClick={() => mintCharacterNFTAction(index)}
-          >{`Mint ${character.name}`}</button>
+          <div style={{ marginBottom: '50px' }}>
+            <img
+              src={`https://cloudflare-ipfs.com/ipfs/${character.imageURI}`}
+              alt={character.name}
+            />
+          </div>
+          <button className="character-mint-button" onClick={() => mintCharacterNFTAction(index)}>
+            Mint
+          </button>
         </div>
       );
     });
@@ -96,7 +94,7 @@ const SelectCharacter = ({ setCharacterNFT }) => {
 
   return (
     <div className="select-character-container">
-      <h2>Mint Your Hero. Choose wisely.</h2>
+      <h2 className="text-3xl font-bold mt-20 mb-10">Mint Your Pokemon. Choose wisely.</h2>
       {mintingCharacter && (
         <div className="loading">
           <div className="indicator">
@@ -104,6 +102,7 @@ const SelectCharacter = ({ setCharacterNFT }) => {
             <p>Minting In Progress...</p>
           </div>
           <img
+            className="mb-10"
             src="https://media2.giphy.com/media/61tYloUgq1eOk/giphy.gif?cid=ecf05e47dg95zbpabxhmhaksvoy8h526f96k4em0ndvx078s&rid=giphy.gif&ct=g"
             alt="Minting loading indicator"
           />
