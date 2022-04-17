@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import './Arena.css';
 import { useContract } from '../../hooks/useContract';
 import LoadingIndicator from '../LoadingIndicator';
-import HealthBar from 'Components/HealthBar';
 import PokemonCard from 'Components/PokemonCard';
 import BossCard from 'Components/BossCard';
 
@@ -22,6 +21,7 @@ const Arena = ({ characterNFT, setCharacterNFT }) => {
     await sleep(500);
     setAttackState('hit');
     await sleep(500);
+    setAttackState('AttackInitiated');
   };
 
   const runAttackAction = async () => {
@@ -35,12 +35,34 @@ const Arena = ({ characterNFT, setCharacterNFT }) => {
         setShowToast(true);
         setTimeout(() => {
           setShowToast(false);
+          setToastMessage('');
         }, 5000);
       }
     } catch (error) {
       console.error('Error attacking boss:', error);
     } finally {
-      setAttackState('AttackCompleted');
+      setAttackState('');
+    }
+  };
+
+  const runReviveAction = async () => {
+    try {
+      if (gameContract) {
+        console.log('Revive character...');
+        setAttackState('ReviveInitiated');
+        const reviveTxn = await gameContract.revive();
+        await reviveTxn.wait();
+        console.log('reviveTxn:', reviveTxn);
+        setShowToast(true);
+        setTimeout(() => {
+          setShowToast(false);
+          setToastMessage('');
+        }, 5000);
+      }
+    } catch (error) {
+      console.error('Error reviving character:', error);
+    } finally {
+      setAttackState('');
     }
   };
 
@@ -58,29 +80,37 @@ const Arena = ({ characterNFT, setCharacterNFT }) => {
 
       let msg = '';
       if (critChance >= 8) {
-        msg = `💥 CRITICAL HIT! Triple Damage, ${boss.name} was hit for ${damage}!`;
+        msg = `💥 CRITICAL HIT! Triple Damage, hit for ${damage}!`;
       } else if (critChance >= 5) {
-        msg = `💥 CRITICAL HIT! Double Damage, ${boss.name} was hit for ${damage}!`;
+        msg = `💥 CRITICAL HIT! Double Damage, hit for ${damage}!`;
       } else {
-        msg = `💥 ${boss.name} was hit for ${damage}!`;
+        msg = `💥 Hit for ${damage}!`;
       }
-      setToastMessage(msg);
 
       console.log(msg);
       console.log(`AttackComplete - BossHp: ${bossHp} Player Hp: ${playerHp}`);
 
+      setToastMessage(msg);
       setBoss((prevState) => ({ ...prevState, hp: bossHp }));
       setCharacterNFT((prevState) => ({ ...prevState, hp: playerHp }));
+    };
+
+    const onReviveComplete = (_sender, newPlayerHp) => {
+      const playerHp = newPlayerHp.toNumber();
+      setCharacterNFT((prevState) => ({ ...prevState, hp: playerHp }));
+      setToastMessage('Your Pokemon has been revived');
     };
 
     if (gameContract) {
       fetchBoss();
       gameContract.on('AttackComplete', onAttackComplete);
+      gameContract.on('ReviveComplete', onReviveComplete);
     }
 
     return () => {
       if (gameContract) {
         gameContract.off('AttackComplete', onAttackComplete);
+        gameContract.off('ReviveComplete', onReviveComplete);
       }
     };
   }, [gameContract]);
@@ -101,15 +131,22 @@ const Arena = ({ characterNFT, setCharacterNFT }) => {
               <p>Attacking... ⚔️</p>
             </div>
           )}
+
+          {attackState === 'ReviveInitiated' && (
+            <div className="mt-10">
+              <LoadingIndicator />
+              <p>Reviving... </p>
+            </div>
+          )}
         </div>
       )}
 
       {boss && characterNFT && (
         <>
           <button
-            disabled={attackState === 'attacking' || characterNFT.hp === 0}
+            disabled={attackState === 'AttackInitiated' || characterNFT.hp === 0}
             className={`text-xl font-bold w-96 mb-10 py-5 px-20 rounded-xl ${
-              attackState === 'attacking' || characterNFT.hp === 0
+              attackState === 'AttackInitiated' || characterNFT.hp === 0
                 ? 'bg-gray-500'
                 : 'bg-red-800 hover:bg-red-900'
             }`}
@@ -119,7 +156,12 @@ const Arena = ({ characterNFT, setCharacterNFT }) => {
           </button>
           {characterNFT.hp === 0 && (
             <button
-              className={`text-xl font-bold w-96 mb-10 py-5 px-20 rounded-xl bg-orange-500 hover:bg-orange-900`}
+              disabled={attackState === 'ReviveInitiated'}
+              className={`text-xl font-bold w-96 mb-10 py-5 px-20 rounded-xl ${
+                attackState === 'ReviveInitiated'
+                  ? 'bg-gray-500'
+                  : 'bg-orange-500 hover:bg-orange-900'
+              }`}
               onClick={runReviveAction}
             >
               {` Revive `}
