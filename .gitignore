@@ -1,4 +1,12 @@
-node_modules
-cache
-artifacts
+__pycache__
 .env
+.history
+.hypothesis/
+build/
+reports/
+
+
+
+node_modules
+package.json
+package-lock.json

@@ -1,9 +1,14 @@
 import { useEffect, useState } from 'react';
-import { abi } from '../utils/MyEpicGame.json';
+import MyEpicGame from 'contract/MyEpicGame.json';
 import { ethers } from 'ethers';
 
 export const useContract = () => {
-  const CONTRACT_ADDRESS = '0x047A42ef33E44628D6149023324BB82fb9f14d6a';
+  // v1 contract address
+  // const CONTRACT_ADDRESS = '0x047A42ef33E44628D6149023324BB82fb9f14d6a';
+
+  // v2
+  const CONTRACT_ADDRESS = '0x5E322636F837A38e16D6F202e10629AAcECA258c';
+
   const [gameContract, setGameContract] = useState(null);
 
   useEffect(() => {
@@ -11,7 +16,7 @@ export const useContract = () => {
     if (ethereum) {
       const provider = new ethers.providers.Web3Provider(ethereum);
       const signer = provider.getSigner();
-      const gameContract = new ethers.Contract(CONTRACT_ADDRESS, abi, signer);
+      const gameContract = new ethers.Contract(CONTRACT_ADDRESS, MyEpicGame.abi, signer);
 
       setGameContract(gameContract);
     } else {
