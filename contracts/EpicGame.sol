@@ -205,6 +205,13 @@ contract EpicGame is ERC721 {
     emit ReviveComplete(msg.sender, player.hp);
   }
 
+  // revive and level up boss
+  function reviveBigBoss() public onlyOwner {
+    require(bigBoss.hp == 0, 'Cannot revive an alive Boss');
+    bigBoss.hp = bigBoss.maxHp / 2;
+    bigBoss.attackDamage = bigBoss.attackDamage * 2;
+  }
+
   function getUserNFT(address _user) public view returns (CharacterAttributes memory) {
     uint256 tokenId = nftHolders[_user];
     if (tokenId > 0) {
