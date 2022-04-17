@@ -7,25 +7,33 @@
 - This project is a card-based nft game inspired by [@buildspace](https://app.buildspace.so/) see [v1](https://github.com/birdglove2/nft-turn-based-card-game/tree/v1/hardhat)
 - Built with `solidity` `brownie` `react` `javascript` `ethers` `tailwindcss`
 
+# How to run
 
+## Prerequisite
 
-## How to run 
-  ### Prerequisite
     - Brownie
     - React
-    - npm` or yarn
-  ### Smartcontract
-    - Unit Test
-        brownie test
-    - Integration Test
-        brownie test --network rinkeby
-    - Deploy on rinkeby
-        make deploy
-    
-  ### Website:
-  ```cd web && npm start``` and visit `http://localhost:3000`
+    - npm or yarn
 
-## How to play
+## Smartcontract
+
+Compile
+`brownie compile`
+
+Deploy on rinkeby
+`make deploy` or `brownie run scripts/deploy_epic_game.py --network rinkeby`
+
+Unit Test
+`brownie test`
+
+Integration Test
+`brownie test --network rinkeby`
+
+## Website:
+
+`cd web && npm start` and visit `http://localhost:3000`
+
+# How to play
 
 - Connect your wallet with `metamask` and connect to `rinkeby` network
 
