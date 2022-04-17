@@ -1,14 +1,13 @@
 import { useEffect, useState } from 'react';
 import './SelectCharacter.css';
-import { useContract, useAccount } from 'hooks';
+import { useContract } from 'hooks';
 import '../LoadingIndicator';
 import LoadingIndicator from '../LoadingIndicator';
 
-const SelectCharacter = ({ setCharacterNFT }) => {
+const SelectCharacter = ({ setIsLoading }) => {
   const [characters, setCharacters] = useState([]);
   const { gameContract, transformCharacterData } = useContract();
   const [mintingCharacter, setMintingCharacter] = useState(false);
-  const { currentAccount } = useAccount();
 
   const mintCharacterNFTAction = async (characterId) => {
     try {
@@ -22,7 +21,7 @@ const SelectCharacter = ({ setCharacterNFT }) => {
     } catch (error) {
       console.warn('MintCharacterAction Error:', error);
     } finally {
-      setMintingCharacter(true);
+      setMintingCharacter(false);
     }
   };
 
@@ -42,21 +41,11 @@ const SelectCharacter = ({ setCharacterNFT }) => {
       }
     };
 
-    // event listener
     const onCharacterMint = async (sender, tokenId, characterIndex) => {
       console.log(
         `CharacterNFTMinted - sender: ${sender} tokenId: ${tokenId.toNumber()} characterIndex: ${characterIndex.toNumber()}`
       );
-
-      /*
-       * Once our character NFT is minted we can fetch the metadata from our contract
-       * and set it in state to move onto the Arena
-       */
-      if (gameContract) {
-        const characterNFT = await gameContract.getUserNFT(currentAccount);
-        console.log('CharacterNFT: ', characterNFT);
-        setCharacterNFT(transformCharacterData(characterNFT));
-      }
+      setIsLoading(true);
     };
 
     if (gameContract) {

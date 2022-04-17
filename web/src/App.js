@@ -37,7 +37,7 @@ const App = () => {
       console.log('CurrentAccount:', currentAccount);
       fetchNFTMetadata();
     }
-  }, [currentAccount, gameContract]);
+  }, [currentAccount, gameContract, isLoading]);
 
   const renderContent = () => {
     if (isLoading) {
@@ -54,7 +54,7 @@ const App = () => {
         </button>
       );
     } else if (currentAccount && !characterNFT) {
-      return <SelectCharacter setCharacterNFT={setCharacterNFT} />;
+      return <SelectCharacter setIsLoading={setIsLoading} />;
     } else if (currentAccount && characterNFT) {
       return <Arena characterNFT={characterNFT} setCharacterNFT={setCharacterNFT} />;
     }
