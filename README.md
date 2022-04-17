@@ -1,10 +1,10 @@
-# NFT Turn-Based Card Game
+# NFT Turn-Based Card Game v2
 
 ![Pokeverse](mainPic.png)
 
 - See [website](https://nft-turn-based-card-game.vercel.app/)
 - Contract Address: [0x5E322636F837A38e16D6F202e10629AAcECA258c](https://rinkeby.etherscan.io/address/0x5E322636F837A38e16D6F202e10629AAcECA258c#code)
-- This project is a card-based nft game inspired by [@buildspace](https://app.buildspace.so/)
+- This project is a card-based nft game inspired by [@buildspace](https://app.buildspace.so/) see [v1](https://github.com/birdglove2/nft-turn-based-card-game/tree/v1/hardhat)
 - Built with `solidity` `brownie` `react` `javascript` `ethers` `tailwindcss`
 
 ## How to play
