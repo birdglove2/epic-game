@@ -51,6 +51,7 @@ contract EpicGame is ERC721 {
 
   event CharacterNFTMinted(address sender, uint256 tokenId, uint256 characterIndex);
   event AttackComplete(uint256 newBossHp, uint256 newPlayerHp, uint256 damage, uint8 critChance);
+  event ReviveComplete(address sender, uint256 newPlayerHp);
 
   constructor() ERC721('Pokemon', 'POKEMON') {
     owner = msg.sender;
@@ -201,6 +202,7 @@ contract EpicGame is ERC721 {
     CharacterAttributes storage player = nftHolderAttributes[tokenId];
     require(player.hp == 0, 'Cannot revive an alive NFT');
     player.hp = player.maxHp / 2;
+    emit ReviveComplete(msg.sender, player.hp);
   }
 
   function getUserNFT(address _user) public view returns (CharacterAttributes memory) {
