@@ -11,16 +11,16 @@
 
 ## How to run 
   ### Prerequisite
-    - `Brownie`
-    - `React`
-    - `npm` or `yarn`
+    - Brownie
+    - React
+    - npm` or yarn
   ### Smartcontract
     - Unit Test
-     ```brownie test```
+        brownie test
     - Integration Test
-    ```brownie test --network rinkeby```
+        brownie test --network rinkeby
     - Deploy on rinkeby
-    ``` make deploy```
+        make deploy
     
   ### Website:
   ```cd web && npm start``` and visit `http://localhost:3000`
