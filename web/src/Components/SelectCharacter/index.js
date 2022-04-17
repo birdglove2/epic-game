@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import './SelectCharacter.css';
 import { useContract } from 'hooks';
 import '../LoadingIndicator';
 import LoadingIndicator from '../LoadingIndicator';
@@ -63,17 +62,24 @@ const SelectCharacter = ({ setIsLoading }) => {
   const renderCharacters = () => {
     return characters.map((character, index) => {
       return (
-        <div className="character-item" key={character.name}>
-          <div className="name-container">
-            <p>{character.name}</p>
+        <div
+          className="flex flex-col relative justify-self-center self-center mb-10"
+          key={character.name}
+        >
+          <div className="absolute bg-gray-400 m-2 rounded-lg">
+            <p className="my-2 mx-4 font-bold">{character.name}</p>
           </div>
-          <div style={{ marginBottom: '50px' }}>
+          <div className="my-5">
             <img
+              className="h-[300px] w-[350px] object-cover"
               src={`https://cloudflare-ipfs.com/ipfs/${character.imageURI}`}
               alt={character.name}
             />
           </div>
-          <button className="character-mint-button" onClick={() => mintCharacterNFTAction(index)}>
+          <button
+            className="w-full h-[40px] bottom-0 bg-green-300 rounded-[20px] border-none cursor-pointer font-bold text-md"
+            onClick={() => mintCharacterNFTAction(index)}
+          >
             Mint
           </button>
         </div>
@@ -82,8 +88,8 @@ const SelectCharacter = ({ setIsLoading }) => {
   };
 
   return (
-    <div className="select-character-container">
-      <h2 className="text-3xl font-bold mt-20 mb-10">Mint Your Pokemon. Choose wisely.</h2>
+    <div className="w-full h-full flex flex-col items-center mt-20">
+      <h2 className="text-3xl font-bold mb-20">Mint Your Pokemon. Choose wisely.</h2>
       {mintingCharacter && (
         <div className="loading">
           <div className="indicator">
@@ -97,7 +103,11 @@ const SelectCharacter = ({ setIsLoading }) => {
           />
         </div>
       )}
-      {characters.length > 0 && <div className="character-grid">{renderCharacters()}</div>}
+      {characters.length > 0 && (
+        <div className="w-full items-center grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+          {renderCharacters()}
+        </div>
+      )}
     </div>
   );
 };
