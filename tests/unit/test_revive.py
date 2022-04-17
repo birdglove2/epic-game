@@ -11,9 +11,10 @@ def test_revive_dead_nft():
     account = get_account()
     epic_game = test_cannot_attack_with_dead_nft()
 
-    epic_game.revive({"from": account})
+    tx = epic_game.revive({"from": account})
+    newPlayerHp = tx.events["ReviveComplete"]["newPlayerHp"]
     (_, _, _, playerHp, playerMaxHp, _) = epic_game.getUserNFT(account)
-    assert playerHp == playerMaxHp / 2
+    assert playerHp == playerMaxHp / 2 == newPlayerHp
 
 
 def test_cannot_revive_alive_nft():
