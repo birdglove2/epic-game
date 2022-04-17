@@ -1,4 +1,4 @@
-# NFT Turn-Based Card Game v2
+# Turn-Based NFT Card Game v2
 
 ![Pokeverse](mainPic.png)
 
