@@ -50,7 +50,7 @@ contract EpicGame is ERC721 {
   mapping(address => uint256) public nftHolders;
 
   event CharacterNFTMinted(address sender, uint256 tokenId, uint256 characterIndex);
-  event AttackComplete(uint256 newBossHp, uint256 newPlayerHp);
+  event AttackComplete(uint256 newBossHp, uint256 newPlayerHp, uint256 damage, uint8 critChance);
 
   constructor() ERC721('Pokemon', 'POKEMON') {
     owner = msg.sender;
@@ -165,7 +165,7 @@ contract EpicGame is ERC721 {
     require(bigBoss.hp > 0, 'Big Boss is already dead');
 
     // calculate critical damage
-    uint256 damage = calculateCriticalDamage(player.attackDamage);
+    (uint256 damage, uint8 critChance) = calculateCriticalDamage(player.attackDamage);
 
     // Allow player to attack boss with critable damage
     if (bigBoss.hp < damage) {
@@ -181,18 +181,18 @@ contract EpicGame is ERC721 {
       player.hp = player.hp - bigBoss.attackDamage;
     }
 
-    emit AttackComplete(bigBoss.hp, player.hp);
+    emit AttackComplete(bigBoss.hp, player.hp, damage, critChance);
   }
 
-  function calculateCriticalDamage(uint256 _damage) internal view returns (uint256) {
-    uint256 critChance = random() % 10;
+  function calculateCriticalDamage(uint256 _damage) internal view returns (uint256, uint8) {
+    uint8 critChance = uint8(random() % 10);
     uint256 damage = _damage;
     if (critChance >= 8) {
       damage = _damage * 3;
     } else if (critChance >= 5 && critChance <= 7) {
       damage = _damage * 2;
     }
-    return damage;
+    return (damage, critChance);
   }
 
   // revive dead NFT with half of its maxHP
