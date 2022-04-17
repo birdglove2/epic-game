@@ -7,10 +7,7 @@ export const useContract = () => {
   // const CONTRACT_ADDRESS = '0x047A42ef33E44628D6149023324BB82fb9f14d6a';
 
   // v2
-  // const CONTRACT_ADDRESS = '0x208F0A6500DDf63E959E2B933C16Bdf7e19e26D9';
-
-  // v3
-  const CONTRACT_ADDRESS = '0xDA22e87906b085A99256554E7B3F4cB64B985c86';
+  const CONTRACT_ADDRESS = '0x5E322636F837A38e16D6F202e10629AAcECA258c';
 
   const [gameContract, setGameContract] = useState(null);
 
