@@ -40,6 +40,7 @@
 
 # How to play
 
+- Visit [website](https://nft-turn-based-card-game.vercel.app/)
 - Connect your wallet with `metamask` and connect to `rinkeby` network
 
 - Mint your character from these 3 pokemons
