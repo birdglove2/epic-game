@@ -9,7 +9,7 @@
 
 ## How to play
 
-- Connect your wallet with metamask and connect to `rinkeby` network
+- Connect your wallet with `metamask` and connect to `rinkeby` network
 
 - Mint your character from these 3 pokemons
   ![Mint your Characters](defaultCharacters.png)
