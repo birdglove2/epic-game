@@ -4,8 +4,9 @@
 
 - See [website](https://nft-turn-based-card-game.vercel.app/)
 - Contract Address: [0x5E322636F837A38e16D6F202e10629AAcECA258c](https://rinkeby.etherscan.io/address/0x5E322636F837A38e16D6F202e10629AAcECA258c#code)
-- This project is a card-based nft game inspired by [@buildspace](https://app.buildspace.so/) see [v1](https://github.com/birdglove2/nft-turn-based-card-game/tree/v1/hardhat)
+- This project is a card-based nft game inspired by [@buildspace](https://app.buildspace.so/)
 - Built with `solidity` `brownie` `react` `javascript` `ethers` `tailwindcss`
+- See [version1](https://github.com/birdglove2/nft-turn-based-card-game/tree/v1/hardhat)
 
 # How to run
 
