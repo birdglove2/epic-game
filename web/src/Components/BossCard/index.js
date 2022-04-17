@@ -7,7 +7,7 @@ const BossCard = ({ attackState, boss }) => {
         <div className="flex flex-col text-xl font-bold p-4 rounded-lg bg-gray-800">
           <h2>🔥 {boss.name} 🔥</h2>
           <img
-            className="p-2 w-84 h-72 rounded-lg object-cover"
+            className={`p-2 w-84 h-72 rounded-lg object-cover ${boss.hp === 0 ? 'opacity-30' : ''}`}
             src={`https://cloudflare-ipfs.com/ipfs/${boss.imageURI}`}
             alt={`boss ${boss.name}`}
           />

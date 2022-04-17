@@ -7,7 +7,9 @@ const PokemonCard = ({ attackState, character }) => {
         <div className="flex flex-col text-xl font-bold p-4 rounded-lg bg-gray-800">
           <h2>{character.name}</h2>
           <img
-            className="w-84 h-72 rounded-lg object-cover"
+            className={`w-84 h-72 rounded-lg object-cover ${
+              character.hp === 0 ? 'opacity-30' : ''
+            }`}
             src={`https://cloudflare-ipfs.com/ipfs/${character.imageURI}`}
             alt={`character ${character.name}`}
           />

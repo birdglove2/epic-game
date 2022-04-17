@@ -122,23 +122,29 @@ const Arena = ({ characterNFT, setCharacterNFT }) => {
           <div id="desc">{toastMessage}</div>
         </div>
       )}
-      {boss && (
-        <div className="flex flex-col justify-around mb-12">
-          <BossCard attackState={attackState} boss={boss} />
-          {attackState === 'AttackInitiated' && (
-            <div className="mt-10">
-              <LoadingIndicator />
-              <p>Attacking... ⚔️</p>
-            </div>
-          )}
 
-          {attackState === 'ReviveInitiated' && (
-            <div className="mt-10">
-              <LoadingIndicator />
-              <p>Reviving... </p>
-            </div>
+      {boss && (
+        <>
+          {boss.hp === 0 && (
+            <h1 className="m-10 text-5xl font-bold">🎉 Congratulations! You win! 🎉</h1>
           )}
-        </div>
+          <div className="flex flex-col justify-around mb-12">
+            <BossCard attackState={attackState} boss={boss} />
+            {attackState === 'AttackInitiated' && (
+              <div className="mt-10">
+                <LoadingIndicator />
+                <p>Attacking... ⚔️</p>
+              </div>
+            )}
+
+            {attackState === 'ReviveInitiated' && (
+              <div className="mt-10">
+                <LoadingIndicator />
+                <p>Reviving... </p>
+              </div>
+            )}
+          </div>
+        </>
       )}
 
       {boss && characterNFT && (
