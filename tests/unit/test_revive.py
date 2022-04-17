@@ -43,7 +43,7 @@ def test_revive_boss():
     epic_game = deploy_and_mint(account)
 
     attack_til_boss_dead(epic_game, account)
-    (_, _, oldBossHp, oldBossMaxHp, oldBossAttackDamage) = epic_game.getBigBoss()
+    (_, _, oldBossHp, _, oldBossAttackDamage) = epic_game.getBigBoss()
     assert oldBossHp == 0
 
     tx = epic_game.reviveBigBoss({"from": account})
