@@ -197,7 +197,7 @@ contract EpicGame is ERC721 {
   }
 
   // revive dead NFT with half of its maxHP
-  function revive() public payable onlyPlayer {
+  function revive() public onlyPlayer {
     uint256 tokenId = nftHolders[msg.sender];
     CharacterAttributes storage player = nftHolderAttributes[tokenId];
     require(player.hp == 0, 'Cannot revive an alive NFT');
