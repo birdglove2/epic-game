@@ -6,9 +6,16 @@
 - Contract Address: [0x5E322636F837A38e16D6F202e10629AAcECA258c](https://rinkeby.etherscan.io/address/0x5E322636F837A38e16D6F202e10629AAcECA258c#code)
 - This project is a card-based nft game inspired by [@buildspace](https://app.buildspace.so/)
 - Built with `solidity` `brownie` `react` `javascript` `ethers` `tailwindcss`
+
 - See [version1](https://github.com/birdglove2/nft-turn-based-card-game/tree/v1/hardhat)
 
 # How to run
+
+# What's new in v2?
+
+- New Look Website 🔥
+- Introduce Critical Damage 💥, the player can now hit the boss with critical damage depends on random critical chance.
+- Introduce Revive Feature ✨, the player can now revive dead nft character
 
 ## Prerequisite
 
