@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 
 export const useNetwork = () => {
   const checkNetwork = () => {
-    console.log('check networkaslkdfjnasl;fkjadslf');
     if (window.ethereum.networkVersion !== '4') {
       return (
         <div className="bg-slate-900 w-full p-4 text-red-500 text-2xl">
