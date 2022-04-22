@@ -1,17 +1,12 @@
 import './Components/Arena/Arena.css';
 import { useState, useEffect } from 'react';
-import twitterLogo from 'assets/twitter-logo.svg';
-import githubLogo from 'assets/GitHub-Mark-32px.png';
 import './App.css';
 import SelectCharacter from 'Components/SelectCharacter';
 import LoadingIndicator from 'Components/LoadingIndicator';
 import Arena from 'Components/Arena';
 import { useContract, useAccount, useNetwork } from 'hooks';
-
-// Constants
-const TWITTER_HANDLE = '_buildspace';
-const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`;
-const GITHUB_LINK = 'https://github.com/birdglove2/turn-based-nft-card-game';
+import { PokemonCanvas } from 'canvas';
+import { Footer } from 'Components/Footer';
 
 const App = () => {
   const [characterNFT, setCharacterNFT] = useState(null);
@@ -65,42 +60,30 @@ const App = () => {
   };
 
   return (
-    <div className="text-center justify-center">
-      {checkNetwork()}
-      <div className="flex flex-col justify-center items-center mx-5 sm:mx-10 3xl:mx-1/10 4xl:mx-1/6 5xl:mx-1/5 mb-20 my-10">
-        <div>
-          <div className="p-4 mb-5">
-            <p className="text-6xl font-bold mb-2">⚔️ Pokeverse ⚔️</p>
-            <p className="text-2xl italic font-bold mb-2">Team up to protect the Pokemon world!</p>
-            <p className="text-2xl font-bold">(╯°□°)╯︵◓</p>
+    <>
+      <div className="text-center justify-center">
+        {checkNetwork()}
+        <div className="flex flex-col justify-center items-center mx-5 sm:mx-10 3xl:mx-1/10 4xl:mx-1/6 5xl:mx-1/5 mb-20 my-10">
+          <div>
+            <div className="p-4 mb-5">
+              <p className="text-6xl font-bold mb-2">⚔️ Pokeverse ⚔️</p>
+              <p className="text-2xl italic font-bold mb-2">
+                Team up to protect the Pokemon world!
+              </p>
+              <p className="text-2xl font-bold">(╯°□°)╯︵◓</p>
+            </div>
+
+            <div className="w-110 min-w-full h-110">
+              <PokemonCanvas />
+            </div>
+            {/* <img src="https://wallpaperaccess.com/full/109332.jpg" alt="first img" /> */}
+            {renderContent()}
           </div>
-          <img src="https://wallpaperaccess.com/full/109332.jpg" alt="first img" />
-          {renderContent()}
         </div>
       </div>
 
-      <div className="flex flex-col justify-center items-center">
-        <a
-          target="_blank"
-          rel="noopener noreferrer"
-          href={GITHUB_LINK}
-          className="flex justify-center items-center"
-        >
-          <img alt="Github Logo" className="w-9 h-9 mr-2" src={githubLogo} />
-          <p className="text-sm font-bold">visit the code</p>
-        </a>
-
-        <div className="flex justify-center items-center">
-          <img alt="Twitter Logo" className="w-9 h-9" src={twitterLogo} />
-          <a
-            className="text-sm font-bold"
-            href={TWITTER_LINK}
-            target="_blank"
-            rel="noopener noreferrer"
-          >{`built with @${TWITTER_HANDLE}`}</a>
-        </div>
-      </div>
-    </div>
+      <Footer />
+    </>
   );
 };
 
