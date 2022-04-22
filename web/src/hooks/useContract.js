@@ -19,6 +19,7 @@ export const useContract = () => {
       const gameContract = new ethers.Contract(CONTRACT_ADDRESS, MyEpicGame.abi, signer);
 
       setGameContract(gameContract);
+      console.log(`See contract at https://rinkeby.etherscan.io/address/${CONTRACT_ADDRESS}`);
     } else {
       console.log('Ethereum object not found');
     }

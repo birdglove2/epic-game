@@ -34,6 +34,7 @@ const SelectCharacter = ({ setIsLoading }) => {
           return transformCharacterData(charactersData);
         });
 
+        console.log('default characters: ', characters);
         setCharacters(characters);
       } catch (err) {
         console.error('Something went wrong fetching characters', err.message);
