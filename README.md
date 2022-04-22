@@ -1,6 +1,6 @@
 # Turn-Based NFT Card Game v2
 
-![Pokeverse](mainPic.png)
+![Pokeverse](newMainPic.png)
 
 - See [website](https://nft-turn-based-card-game.vercel.app/)
 - Contract Address: [0x5E322636F837A38e16D6F202e10629AAcECA258c](https://rinkeby.etherscan.io/address/0x5E322636F837A38e16D6F202e10629AAcECA258c#code)
