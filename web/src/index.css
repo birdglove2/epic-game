@@ -2,9 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-body,
 html {
   margin: 0;
+  height: 100%;
 }
 
 body {
@@ -17,4 +17,6 @@ body {
     rgba(10, 30, 60, 1) 100%
   );
   color: white;
+  background-attachment: fixed;
+  height: 100%;
 }
